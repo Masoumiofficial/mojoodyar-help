@@ -6,6 +6,7 @@ import sys
 import pymupdf
 
 PDF = '/home/user/Mojoodyar-User-Guide-FA.pdf'
+HELP = '/home/user/help.pdf'
 DOCX = '/home/user/Mojoodyar-User-Guide-FA.docx'
 
 FACT_TERMS = [
@@ -140,6 +141,49 @@ def main():
         bad('مارک‌آپ در DOCX')
     else:
         ok('DOCX بدون مارک‌آپ')
+
+
+    # ---- help.pdf: install / update guide -----------------------------------
+    print()
+    print('--- help.pdf (راهنمای نصب و بروزرسانی) ---')
+    hp = pymupdf.open(HELP)
+    report.append(('INFO', f'help.pdf صفحه‌ها: {hp.page_count}'))
+    hlinks = [l for p in hp for l in p.get_links()]
+    hinternal = [l for l in hlinks if l['kind'] == pymupdf.LINK_GOTO]
+    huri = [l for l in hlinks if l['kind'] == pymupdf.LINK_URI]
+    report.append(('INFO', f'help.pdf پیوندها: {len(hlinks)} (داخلی {len(hinternal)}، بیرونی {len(huri)})'))
+    if len(hinternal) < 6:
+        bad('help.pdf پیوند داخلی فهرست کم است')
+    else:
+        ok('help.pdf فهرست پیونددار دارد')
+    if huri:
+        bad('help.pdf پیوند بیرونی ناخواسته دارد')
+    htext = ' '.join(p.get_text() for p in hp).replace('\u200c', '')
+    flat_h = ' '.join(htext.split())
+    # MuPDF inserts a space where a ZWNJ sits before a final heh; compare
+    # without any whitespace so those words still match.
+    dense_h = ''.join(htext.split())
+    need = ['FileZilla', 'بارگذاری افزونه', 'افزونه‌های نصب‌شده', 'غیرفعال کردن',
+            'InnoDB', 'WP-Cron', 'public_html/wp-content/plugins',
+            'بازگشت به نسخه', 'ارسال ایمیل آزمایشی']
+    missing = [k for k in need if ''.join(k.replace('\u200c', '').split()) not in dense_h]
+    ok('همهٔ موضوع‌های الزامی نصب و بروزرسانی هست') if not missing else bad(f'موضوع غایب در help.pdf: {missing}')
+    if '#' in htext and ('#strong' in htext or '#shot' in htext or 'shotph' in htext):
+        bad('مارک‌آپ در help.pdf')
+    else:
+        ok('help.pdf بدون مارک‌آپ')
+    # per-page overflow check on the install guide
+    over = []
+    for i, page in enumerate(hp):
+        r = page.rect
+        for b in page.get_text('blocks'):
+            if b[0] < 12 or b[1] < 12 or b[2] > r.width - 12 or b[3] > r.height - 12:
+                over.append(i + 1)
+                break
+    if over:
+        bad(f'help.pdf محتوا بیرون از کادر: صفحه {sorted(set(over))}')
+    else:
+        ok('help.pdf هیچ محتوایی بیرون از کادر نیست')
 
     for line in report:
         print(line[0], line[1])

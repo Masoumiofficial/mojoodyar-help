@@ -30,6 +30,8 @@
 #let PRODUCTFULL = "موجودیار | Mojoodyar"
 #let VERSION     = "1.0.0"
 #let VERSIONFA   = "۱٫۰٫۰"
+// عنوان پیش‌فرض سند در سرصفحه/پاصفحه؛ هر سند می‌تواند با doctitle عوضش کند
+#let DOCTITLE    = "راهنمای کاربری"
 #let AUCTION     = "اتحاد وردپرس"
 
 #let fadigits = ("۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹")
@@ -45,9 +47,16 @@
 
 // ---- شمارنده فصل ---------------------------------------------------------
 #let chaplabel = counter("chapter")
+#let seclabel = state("section", "فصل")
+// شمارندهٔ فصل را صفر می‌کند و برچسب بخش را عوض می‌کند (برای سند دوم)
+#let restart(num: "۱", label: "فصل") = {
+  chaplabel.update(0)
+  seclabel.update(label)
+  num
+}
 
 // ---- سبک صفحه (باید در سند اصلی فراخوانی شود) ---------------------------
-#let page-style(body) = {
+#let page-style(body, doctitle: "راهنمای کاربری") = {
   set page(
     paper: "a4",
     margin: (top: 2.55cm, bottom: 2.1cm, inside: 2.05cm, outside: 1.8cm),
@@ -61,7 +70,7 @@
     block(breakable: false, width: 100%, below: 1.2em, above: 0.1em, {
       stack(spacing: 0.42em,
         block(fill: C.brand, radius: 3pt, width: 32pt, height: 3.2pt),
-        text(size: 9.2pt, weight: "bold", fill: C.brand, [فصل #fa(n)]),
+        text(size: 9.2pt, weight: "bold", fill: C.brand, [#seclabel.get() #fa(n)]),
         text(size: 20pt, weight: "bold", fill: C.ink, it.body),
         rule(thickness: 0.6pt),
       )
@@ -149,7 +158,7 @@
     block(width: 100%, below: 1.05em, {
       grid(columns: (1fr, auto, 1fr), align: (right, center, left),
         text(weight: "medium", fill: C.ink, PRODUCTFULL),
-        text[راهنمای کاربری],
+        text(doctitle),
         align(left, text[نسخهٔ #VERSION]),
       )
       v(-1pt)
@@ -168,7 +177,7 @@
       grid(columns: (1fr, 1.4fr, 1fr), align: (right, center, left),
         text[صفحهٔ #fa(pg)],
         text(size: 7.2pt)[محصول #PRODUCT — #AUCTION],
-        align(left, text(size: 7.2pt, [راهنمای کاربری · نسخهٔ #VERSION])),
+        align(left, text(size: 7.2pt, doctitle + " · نسخهٔ " + VERSION)),
       )
     })
   })
@@ -315,6 +324,28 @@
       stroke: 0.7pt + C.grey2, image(path, width: 100%)),
     par(justify: false, leading: 0.55em, text(size: 8.35pt, fill: C.muted, caption)),
   )),
+)
+
+
+// ---- جای تصویر (تا وقتی اسکرین‌شات واقعی نرسیده) -------------------------
+// کادری با خط‌چین که دقیقاً می‌گوید چه تصویری لازم است و از کجا گرفته شود.
+#let shotph(num, caption, need, place) = block(
+  breakable: false, width: 100%, above: 0.75em, below: 1.0em,
+  stack(spacing: 0.42em,
+    block(width: 100%, height: 3.9cm, radius: 4pt,
+      stroke: (paint: C.brand2, thickness: 0.8pt, dash: "dashed"),
+      fill: rgb("#FAF9FF"),
+      align(center + horizon, block(width: 88%, {
+        set par(justify: false, leading: 0.5em)
+        align(center, text(size: 8.2pt, weight: "bold", fill: C.brand)[جای تصویر #num])
+        v(0.25em)
+        align(center, text(size: 9.4pt, weight: "medium", fill: C.ink)[#need])
+        v(0.2em)
+        align(center, text(size: 8.2pt, fill: C.muted)[#place])
+      })),
+    ),
+    par(justify: false, leading: 0.55em, text(size: 8.35pt, fill: C.muted, caption)),
+  ),
 )
 
 // ---- فهرست مطالب --------------------------------------------------------

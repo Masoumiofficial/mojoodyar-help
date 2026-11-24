@@ -43,7 +43,7 @@
         text(size: 12pt, weight: "bold", fill: C.white)[#VERSION]),
       stack(spacing: 0.1cm,
         text(size: 7.6pt, fill: rgb("#7A879F"))[سازگاری],
-        text(size: 9.2pt, weight: "medium", fill: C.white)[وردپرس ۶٫۴+ · ووکامرس ۹+]),
+        text(size: 9.2pt, weight: "medium", fill: C.white)[وردپرس ۶٫۴+ · ووکامرس ۹٫۰+]),
       stack(spacing: 0.1cm,
         text(size: 7.6pt, fill: rgb("#7A879F"))[زبان رابط],
         text(size: 9.2pt, weight: "medium", fill: C.white)[فارسی · راست‌چین]),

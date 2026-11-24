@@ -1,39 +1,40 @@
 # راهنمای کاربری موجودیار | Mojoodyar — نسخهٔ ۱٫۰٫۰
 
-فایل‌های آمادهٔ تحویل و انتشار در ژاکت:
-
 | فایل | توضیح |
 | --- | --- |
-| `Mojoodyar-User-Guide-FA.pdf` | نسخهٔ چاپی — ۵۷ صفحه A4، متن انتخاب‌پذیر، فهرست پیونددار، نشانک‌دار |
-| `Mojoodyar-User-Guide-FA.docx` | نسخهٔ ویرایش‌پذیر، فارسی و راست‌چین |
+| `help.pdf` | **راهنمای نصب و بروزرسانی** — ۱۸ صفحه؛ همین فایل باید در روت بستهٔ خرید و در پوشهٔ مستندات ژاکت باشد |
+| `Mojoodyar-User-Guide-FA.pdf` | راهنمای جامع کاربری — ۵۷ صفحه، ۱۲ فصل |
+| `Mojoodyar-User-Guide-FA.docx` | نسخهٔ ویرایش‌پذیر راهنمای جامع |
+| `help.docx` | نسخهٔ ویرایش‌پذیر راهنمای نصب و بروزرسانی |
 | `Mojoodyar-Documentation-QA.txt` | گزارش کنترل کیفیت و فهرست موارد آزمون‌نشده |
+| `SCREENSHOTS-NEEDED.md` | شش اسکرین‌شاتی که باید جای کادرهای خط‌چین help.pdf بگذارید |
 
 ## دانلود مستقیم
 
-- PDF: `https://raw.githubusercontent.com/Masoumiofficial/mojoodyar-help/arena/50d91c4e-mojoodyar-help/deliverables/Mojoodyar-User-Guide-FA.pdf`
-- DOCX: `https://raw.githubusercontent.com/Masoumiofficial/mojoodyar-help/arena/50d91c4e-mojoodyar-help/deliverables/Mojoodyar-User-Guide-FA.docx`
-- QA: `https://raw.githubusercontent.com/Masoumiofficial/mojoodyar-help/arena/50d91c4e-mojoodyar-help/deliverables/Mojoodyar-Documentation-QA.txt`
+- `help.pdf`: https://github.com/Masoumiofficial/mojoodyar-help/raw/guide-v1.0.0/deliverables/help.pdf
+- راهنمای جامع (PDF): https://github.com/Masoumiofficial/mojoodyar-help/raw/guide-v1.0.0/deliverables/Mojoodyar-User-Guide-FA.pdf
+- راهنمای جامع (DOCX): https://github.com/Masoumiofficial/mojoodyar-help/raw/guide-v1.0.0/deliverables/Mojoodyar-User-Guide-FA.docx
+- گزارش QA: https://github.com/Masoumiofficial/mojoodyar-help/raw/guide-v1.0.0/deliverables/Mojoodyar-Documentation-QA.txt
 
-> اگر فایل در مرورگر باز شد، از دکمهٔ دانلود صفحه استفاده کنید یا `?raw=true` را به انتهای نشانی اضافه کنید.
+## ساختار پیشنهادی بستهٔ ژاکت
 
-## فهرست فصل‌ها
+```text
+Mojoodyar-Documentation/
+├── 01-Plugin-ZIP/Mojoodyar.zip
+├── 02-Screenshots/
+├── 03-Logos/
+├── 04-Help/
+│   ├── help.pdf                        ← نصب و بروزرسانی (روت بسته هم باشد)
+│   └── Mojoodyar-User-Guide-FA.pdf     ← راهنمای جامع
+└── 05-Docs/
+```
 
-معرفی · پیش‌نیازها و نصب · شروع سریع · تنظیمات · پیامک و ایمیل · الگوها و متغیرها ·
-مدیریت لیست انتظار · پیگیری تلفنی · داشبورد و آمار · ابزارها و گزارش رویدادها ·
-حریم خصوصی و امنیت · عیب‌یابی و پرسش‌های متداول · واژه‌نامه و منابع
+طبق درخواست پشتیبان ژاکت: در پوشهٔ مستندات باید یک فایل آموزشی جامع باشد
+(نه لینک به صفحهٔ اصلی ژاکت)، و `help.pdf` در روت فقط شامل نصب و بروزرسانی.
 
 ## بازتولید
 
-منبع حروف‌چینی و اسکریپت‌های ساخت در پوشهٔ `build/` است:
-
 ```bash
-python3 build/scripts/build.py   # ساخت PDF و DOCX
-python3 build/scripts/qa.py      # کنترل کیفیت خودکار (FAILS: 0)
+python3 build/scripts/build.py   # هر دو PDF و هر دو DOCX
+python3 build/scripts/qa.py      # کنترل کیفیت هر دو سند (FAILS: 0)
 ```
-
-## دربارهٔ صحت محتوا
-
-همهٔ گزینه‌ها، دکمه‌ها، پیش‌فرض‌ها، کدهای رویداد و شورت‌کدها از کد واقعی افزونه
-نسخهٔ ۱٫۰٫۰ استخراج شده‌اند. هیچ قابلیت ساختگی یا آزمون‌نشده‌ای «تضمین‌شده» معرفی
-نشده است؛ موارد آزمون‌نشده در بخش «آنچه در این نسخه آزمون نشده است» و در گزارش
-QA فهرست شده‌اند.

@@ -12,6 +12,9 @@ import sys
 SRC = 'build/guide.typ'
 OUT = 'build/guide.md'
 
+if len(sys.argv) > 2:
+    SRC, OUT = sys.argv[1], sys.argv[2]
+
 INLINE = [
     (re.compile(r'#strong\[([^\]]*)\]'), r'**\1**'),
     (re.compile(r'#raw\("((?:[^"\\]|\\.)*)"\)'), lambda m: '`' + m.group(1).replace('\\"', '"') + '`'),
@@ -113,10 +116,16 @@ def convert(src):
             continue
 
         # chapter page
-        m = re.match(r'#chpage\("([^"]*)",\s*"([^"]*)",\s*\[(.*?)\],\s*\[(.*?)\]\)', s)
+        m = re.match(r'#chpage\((?:restart\(\),\s*)?"([^"]*)",\s*"([^"]*)",\s*\[(.*?)\],\s*\[(.*?)\]\)', s)
+        if not m and s.startswith('#chpage(restart()'):
+            # install guide: numeral comes from the restarted counter
+            m = re.match(r'#chpage\(restart\(\),\s*"([^"]*)",\s*\[(.*?)\],\s*\[(.*?)\]\)', s)
+            if m:
+                title, lede, head = m.groups()
+                m = ('۱', title, lede, head)
         if m:
             chapter += 1
-            num, title, lede, head = m.groups()
+            num, title, lede, head = m if isinstance(m, tuple) else m.groups()
             out.append('')
             out.append('# فصل %s — %s' % (num, title))
             out.append('')
@@ -288,11 +297,16 @@ def convert(src):
     text = re.sub(r'^\]$', '', text, flags=re.M)
     text = re.sub(r'\s*\]\)\s*$', '', text)
     text = re.sub(r'^#[a-z]+\(.*$', '', text, flags=re.M)
+    # page-opener blocks in install.typ carry their title as styled text
+    text = re.sub(r'#?text\(size: 20pt[^)]*\)\[([^\]]*)\]', r'## \1', text)
+    text = re.sub(r'#?text\(size: 9\.2pt, weight: "bold", fill: C\.teal\)\[([^\]]*)\]', '', text)
     return text
 
 
 if __name__ == '__main__':
     src = open(SRC).read()
+    # drop blocks that only make sense in the PDF (TOC, cover scaffolding)
+    src = re.sub(r'// MD-SKIP-START.*?// MD-SKIP-END', '', src, flags=re.S)
     if '// MD-START' in src:
         src = src.split('// MD-START', 1)[1]
     md = convert(src)

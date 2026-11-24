@@ -173,7 +173,7 @@ def image(doc, path, caption):
         print('image failed', path, exc)
 
 
-def build(md_path, out_path):
+def build(md_path, out_path, title='راهنمای جامع کاربری', subtitle='افزونهٔ اعلان بازگشت موجودی برای وردپرس و ووکامرس · نسخهٔ ۱٫۰٫۰'):
     doc = Document()
     sec = doc.sections[0]
     sec.page_height = Cm(29.7)
@@ -227,9 +227,9 @@ def build(md_path, out_path):
     style_run(p.add_run('Mojoodyar'), 16, False, PURPLE)
     p = doc.add_paragraph(); rtl(p); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_before = Pt(10)
-    style_run(p.add_run('راهنمای جامع کاربری'), 15, True, BODY)
+    style_run(p.add_run(title), 15, True, BODY)
     p = doc.add_paragraph(); rtl(p); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    style_run(p.add_run('افزونهٔ اعلان بازگشت موجودی برای وردپرس و ووکامرس · نسخهٔ ۱٫۰٫۰'), 10, False, GREY)
+    style_run(p.add_run(subtitle), 10, False, GREY)
     p = doc.add_paragraph(); rtl(p); p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     p.paragraph_format.space_before = Pt(30)
     style_run(p.add_run('اتحاد وردپرس · توزیع در ژاکت'), 9.5, False, GREY)
@@ -331,4 +331,9 @@ def build(md_path, out_path):
 
 
 if __name__ == '__main__':
-    build('build/guide.md', sys.argv[1] if len(sys.argv) > 1 else 'build/guide.docx')
+    md = sys.argv[2] if len(sys.argv) > 2 else 'build/guide.md'
+    if 'install' in md:
+        build(md, sys.argv[1], 'راهنمای نصب و بروزرسانی',
+              'نصب، فعال‌سازی، دسترسی و بروزرسانی افزونه · نسخهٔ ۱٫۰٫۰')
+    else:
+        build(md, sys.argv[1] if len(sys.argv) > 1 else 'build/guide.docx')
