@@ -200,13 +200,24 @@
 // ---- جدول ---------------------------------------------------------------
 // ---- متن خانهٔ جدول: escapes markup specials, then parses ----
 #let mkcell(c) = {
-  let s = c
-  for (from, to) in (("#", "\\#"), ("_", "\\_"), ("$", "\\$"), ("@", "\\@"), ("<", "\\<"), (">", "\\>")) {
-    s = s.replace(from, to)
+  // Escaping inside an inline code span would print the backslashes, so the
+  // escaping is applied only to the parts outside `...` spans.
+  let parts = c.split("`")
+  let s = ()
+  for (i, part) in parts.enumerate() {
+    if calc.odd(i) {
+      s.push("`" + part + "`")
+    } else {
+      let t = part
+      for (from, to) in (("#", "\\#"), ("_", "\\_"), ("$", "\\$"), ("@", "\\@"), ("<", "\\<"), (">", "\\>")) {
+        t = t.replace(from, to)
+      }
+      s.push(t)
+    }
   }
-  eval(s, mode: "markup")
+  eval(s.join(), mode: "markup")
 }
-#let tbl(header: (), rows: (), widths: auto, size: 9.15pt, aligns: auto, pad-y: 5pt) = {
+#let tbl(header: (), rows: (), widths: auto, size: 9.15pt, aligns: auto, pad-y: 5pt, nobreak: false) = {
   let cells = ()
   for r in rows {
     for c in r {
@@ -214,13 +225,14 @@
         if type(c) == str { mkcell(c) } else { c }))
     }
   }
-  table(
+  let t = table(
     columns: widths,
     inset: (x: 6.5pt, y: pad-y),
     align: (col, row) => right,
     table.header(..header.map(h => text(size: size, weight: "bold", fill: C.ink, h))),
     ..cells,
   )
+  if nobreak { block(breakable: false, width: 100%, t) } else { t }
 }
 
 

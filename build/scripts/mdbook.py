@@ -71,10 +71,17 @@ def parse_tbl(block):
     m = re.search(r'rows:\s*\(', block)
     if m:
         content, _ = read_balanced(block, m.end() - 1)
-        for row in re.finditer(r'\(([^()]*)\)', content):
-            cells = [inline(c) for c in re.findall(r'"((?:[^"\\]|\\.)*)"', row.group(1))]
-            if cells:
-                rows.append([strip_hash(c) for c in cells])
+        # walk top-level "( ... )" groups; a naive regex drops any row whose
+        # cell contains parentheses, e.g. "(Administrator)".
+        i = 0
+        while i < len(content):
+            if content[i] == '(':
+                inner, i = read_balanced(content, i)
+                cells = [inline(c) for c in re.findall(r'"((?:[^"\\]|\\.)*)"', inner)]
+                if cells:
+                    rows.append([strip_hash(c) for c in cells])
+            else:
+                i += 1
     return header, rows
 
 
